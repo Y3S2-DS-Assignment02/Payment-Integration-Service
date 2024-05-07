@@ -1,4 +1,6 @@
+const Payment = require('../models/Payment')
 const paymentService = require('../services/paymentService');
+
 
 exports.checkOutController = async (req, res) => {
     try {
@@ -12,3 +14,12 @@ exports.checkOutController = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getAllPayments = async (req, res) => {
+    try {
+        const payments = await Payment.find();
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}

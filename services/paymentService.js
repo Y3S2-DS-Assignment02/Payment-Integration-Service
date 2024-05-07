@@ -4,7 +4,7 @@ const Payment = require("../Models/Payment");
 exports.createPayment = async (items) => {
     try {
 
-        console.log(items)
+        // console.log(items)
         let totalAmount = 0;
 
         
@@ -39,14 +39,7 @@ exports.createPayment = async (items) => {
             cancel_url: "http://localhost:5173/cancel"
         });
 
-        const payment = new Payment({
-            courseName: items[0].courseName, 
-            courseId: items[0].courseId, 
-            studentId: items[0].studentId, 
-            courseFee: totalAmount / 100, 
-            date: new Date() 
-        });
-
+        if(session.url)
        
         await payment.save();
 
@@ -56,5 +49,14 @@ exports.createPayment = async (items) => {
     } catch(error) {
         console.error("Error:", error);
         throw error;
+    }
+};
+
+exports.getAllPayments = async () => {
+    try {
+        const payments = await Payment.find();
+        return payments;
+    } catch (error) {
+        throw new Error('Error retrieving payments');
     }
 };
