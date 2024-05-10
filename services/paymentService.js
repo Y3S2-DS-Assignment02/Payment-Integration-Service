@@ -1,5 +1,5 @@
 const stripe = require("stripe")(process.env.SECRET_STRIPE_KEY);
-const Payment = require("../Models/Payment");
+const Payment = require("../models/Payment");
 
 exports.createPayment = async (items) => {
     try {
