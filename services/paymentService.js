@@ -45,8 +45,8 @@ exports.createPayment = async (items) => {
                     quantity: 1
                 };
             }),
-            success_url: "http://localhost:5173/success",
-            cancel_url: "http://localhost:5173/cancel"
+            success_url: process.env.SUCCESS_URL,
+            cancel_url: process.env.CANCEL_URL
         });
 
         const payment = new Payment({
