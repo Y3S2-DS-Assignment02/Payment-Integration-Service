@@ -1,10 +1,24 @@
-// paymentService.js
-
 const stripe = require("stripe")(process.env.SECRET_STRIPE_KEY);
 const Payment = require("../models/Payment");
+// const Learner = require('../Models/Payment');
+const {sendEmail_Payments} = require('./External/emailService')
+const {sendSMS_Payments} =require('./External/smsService');
+const {GetUserDetailsById} = require('./External/userService')
 
 exports.createPayment = async (items) => {
     try {
+
+        console.log("s",items) 
+
+        const { studentId } = items[0];
+        
+        
+        
+        console.log("studentId",studentId)
+ const userDetails = await GetUserDetailsById(studentId);
+        const {  email, phoneNumber } = userDetails;
+        console.log("userDetails",userDetails)
+        
         const totalAmount = items.reduce((acc, item) => {
             return acc + item.courseFee;
         }, 0) * 100;
@@ -31,25 +45,31 @@ exports.createPayment = async (items) => {
                     quantity: 1
                 };
             }),
-            success_url: "http://localhost:3000/dashboard",
-            cancel_url: "http://localhost:3000/cancel"
+            success_url: "http://localhost:5173/success",
+            cancel_url: "http://localhost:5173/cancel"
         });
 
         const payment = new Payment({
-            courseName: items[0].courseName, // Assuming all items have the same courseName
-            courseId: items[0].courseId, // Assuming all items have the same courseId
-            studentId: items[0].studentId, // Assuming all items have the same studentId
-            courseFee: totalAmount / 100, // Convert back to dollars
-            date: new Date() // Set the current date/time
+            courseName: items[0].courseName, 
+            courseId: items[0].courseId, 
+            studentId: items[0].studentId, 
+           
+            courseFee: totalAmount / 100, 
+            date: new Date() 
         });
 
         // Save the payment document to the database
         await payment.save();
-        
 
         console.log("Payment document saved:", payment);
 
+        // Log email and phoneNumber
+        console.log("User email:", email);
+        console.log("User phoneNumber:", phoneNumber);
+        await sendEmail_Payments(email)
+        await sendSMS_Payments(phoneNumber)
         return session.url;
+        
        
     } catch(error) {
         console.error("Error:", error);
