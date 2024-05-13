@@ -31,7 +31,7 @@ exports.createPayment = async (items) => {
                     quantity: 1
                 };
             }),
-            success_url: "http://localhost:3000/success",
+            success_url: "http://localhost:3000/dashboard",
             cancel_url: "http://localhost:3000/cancel"
         });
 
